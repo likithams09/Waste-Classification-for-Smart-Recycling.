@@ -1,1 +1,13 @@
-
+Input Image
+     ↓
+Image Preprocessing
+(Resize, Normalize)
+     ↓
+MobileNetV2
+Feature Extraction
+     ↓
+Dense Layers
+     ↓
+Softmax Layer
+     ↓
+9 Waste Classes Output
