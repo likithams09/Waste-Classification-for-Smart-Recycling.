@@ -1,17 +1,43 @@
-import tensorflow as tf
+from google.colab import files
+uploaded = files.upload()
+from google.colab import drive
+drive.mount('/content/drive')
+from tensorflow.keras.models import load_model
+
+model = load_model("waste_classifier_model.h5")
+print("Model loaded successfully!")
+uploaded = files.upload()
 import numpy as np
-import cv2
+from tensorflow.keras.preprocessing import image
+import matplotlib.pyplot as plt
 
-model = tf.keras.models.load_model("waste_model.h5")
+img_path = list(uploaded.keys())[0]
 
-classes = ["cardboard","glass","metal","paper","plastic","trash","battery","organic","e-waste"]
+img = image.load_img(img_path, target_size=(224,224))
+img_array = image.img_to_array(img)
+img_array = img_array / 255.0
+img_array = np.expand_dims(img_array, axis=0)
 
-img = cv2.imread("test.jpg")
-img = cv2.resize(img,(224,224))
-img = img/255.0
-img = np.reshape(img,(1,224,224,3))
+plt.imshow(img)
+plt.axis('off')
+plt.show()
 
-prediction = model.predict(img)
+prediction = model.predict(img_array)
 
-print("Predicted Class:",classes[np.argmax(prediction)])
-print("Confidence:",np.max(prediction))
+class_names = [
+    "Cardboard",
+    "Food Organics",
+    "Glass",
+    "Metal",
+    "Miscellaneous Trash",
+    "Paper",
+    "Plastic",
+    "Textile Trash",
+    "Vegetation"
+]
+
+predicted_class = class_names[np.argmax(prediction)]
+confidence = np.max(prediction) * 100
+
+print("Predicted Waste Type:", predicted_class)
+print(f"Confidence: {confidence:.2f}%")
